@@ -4,7 +4,7 @@ from typing import Tuple
 
 def r(a: float, e: float, angle: float) -> float:
     """
-    Calculate r = (a * (1 - e * e)) / (1 + e * cos(angle))
+    r = (a * (1 - e * e)) / (1 + e * cos(angle))
 
     :param a: semi-major axis
     :type a: float
@@ -17,7 +17,7 @@ def r(a: float, e: float, angle: float) -> float:
     """
     angle = np.deg2rad(angle)
 
-    r = (a * (1 - e * e)) / (1 + e * np.cos(angle))
+    r = (a * (1. - e * e)) / (1. + e * np.cos(angle))
 
     r = float(r)
     return r
@@ -81,7 +81,7 @@ def q(a: float, e: float) -> float:
     return a * (1 - e)
 
 
-def Q(a, e):
+def Q(a: float, e: float) -> float:
     """
     Q = a * (1 + e)
 
@@ -97,6 +97,7 @@ def Q(a, e):
 
 def e(a: float, b: float) -> float:
     """
+    e = sqrt(1 - (b * b) / (a * a))
 
     :param a: semi-major axis
     :type a: float

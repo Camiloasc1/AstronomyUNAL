@@ -1,4 +1,7 @@
+from typing import Tuple
+
 import numpy as np
+from astropy import units as u
 
 
 def r(q: float, angle: float) -> float:
@@ -20,7 +23,7 @@ def r(q: float, angle: float) -> float:
     return r
 
 
-def angle(q: float, r: float) -> float:
+def angle(q: float, r: float) -> Tuple[float, float]:
     """
     cos(angle) = 2 * q / r - 1
     angle = arccos(2 * q / r - 1)
@@ -32,7 +35,8 @@ def angle(q: float, r: float) -> float:
     :return: angle
     :rtype: float
     """
-    return np.rad2deg(np.arccos(2 * q / r - 1))
+    angle = np.rad2deg(np.arccos(2 * q / r - 1))
+    return angle, (360. * u.deg) - angle
 
 
 def e() -> float:

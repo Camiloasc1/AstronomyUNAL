@@ -18,7 +18,7 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(25878.413, T_4_11, delta=1)
         self.assertAlmostEqual(17.122, a_sun(T_4_11, 0), places=3)
 
-        a_4_12 = a(21.0874 * u.d.to(u.s), 1.1 * astroconst.M_sun.to(u.kg).value, 18 * astroconst.M_jup.to(u.kg).value)
+        a_4_12 = a((21.0874 * u.d).to(u.s), 1.1 * astroconst.M_sun.to(u.kg), 18 * astroconst.M_jup.to(u.kg)).value
         self.assertAlmostEqual(2.322E10, a_4_12, delta=1E10)
         self.assertAlmostEqual(0.155, a_4_12 * u.m.to(u.au), places=3)
 

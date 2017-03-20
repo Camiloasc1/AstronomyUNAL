@@ -56,7 +56,6 @@ def a(T: float, m1: float, m2: float) -> float:
     a = T * T * mu_gm1m2(m1, m2) / (4 * np.pi * np.pi)
     a = np.power(a, 1. / 3.)
 
-    a = float(a)
     return a
 
 
@@ -148,4 +147,4 @@ def mu_gm1m2(m1: float, m2: float) -> float:
     """
     from astropy.constants import G
 
-    return G.value * (m1 + m2)
+    return G * (m1 + m2)

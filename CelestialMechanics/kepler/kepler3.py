@@ -1,5 +1,6 @@
 import numpy as np
-from CelestialMechanics.kepler.constants import K
+
+from CelestialMechanics.mu import mu_sun, mu_gm1m2
 
 
 def T(a: float, m1: float, m2: float) -> float:
@@ -33,8 +34,7 @@ def T_sun(a: float, m2_over_m1: float) -> float:
     :return: translation period
     :rtype: float
     """
-    T = 2 * np.pi * np.sqrt(a * a * a)
-    T = T / mu_sun(m2_over_m1)
+    T = 2 * np.pi * np.sqrt(a * a * a / mu_sun(m2_over_m1))
 
     T = float(T)
     return T
@@ -70,7 +70,7 @@ def a_sun(T: float, m2_over_m1: float) -> float:
     :return: semi-major axis
     :rtype: float
     """
-    a = T * T * mu_sun(m2_over_m1) * mu_sun(m2_over_m1) / (4 * np.pi * np.pi)
+    a = T * T * mu_sun(m2_over_m1) / (4 * np.pi * np.pi)
     a = np.power(a, 1. / 3.)
 
     a = float(a)
@@ -100,51 +100,9 @@ def n_sun(a: float, m2_over_m1: float) -> float:
     :return: mean motion in degrees
     :rtype: float
     """
-    n = mu_sun(m2_over_m1)
-    n = n / np.sqrt(a * a * a)
+    n = mu_sun(m2_over_m1) / a / a / a
+    n = np.sqrt(n)
     n = np.rad2deg(n)
 
     n = float(n)
     return n
-
-
-def mu_sun(m2_over_m1: float) -> float:
-    """
-    mu = k * (1 + m2/m1)
-
-    :param m2_over_m1:
-    :type m2_over_m1:
-    :return: mu
-    :rtype: float
-    """
-    return K * np.sqrt(1. + m2_over_m1)
-
-
-def mu_na(n: float, a: float) -> float:
-    """
-    mu = n^2 / a^3
-
-    :param n: mean motion in degrees
-    :type n: float
-    :param a: semi-major axis
-    :type a: float
-    :return: mu
-    :rtype: float
-    """
-    return n * n * a * a * a
-
-
-def mu_gm1m2(m1: float, m2: float) -> float:
-    """
-    mu = G (m1 + m2)
-
-    :param m1: mass 1
-    :type m1: float
-    :param m2: mass 2
-    :type m2: float
-    :return: mu
-    :rtype: float
-    """
-    from astropy.constants import G
-
-    return G * (m1 + m2)

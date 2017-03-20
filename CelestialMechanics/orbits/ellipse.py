@@ -194,7 +194,7 @@ def v(r: float, a: float, m1: float, m2: float) -> float:
 
 def v_sun(r: float, a: float, m2_over_m1: float) -> float:
     """
-    v = sqrt(G * (m1 + m2)  * (2 / r - 1 / a))
+    v = sqrt(G * (m1 + m2) * (2 / r - 1 / a))
 
     :param r: radius vector
     :type r: float

@@ -79,3 +79,14 @@ def p(a: float) -> float:
     :rtype: float
     """
     return 2. * a
+
+
+def E() -> float:
+    """
+    E = 0
+
+    :return: energy of the 2-body system
+    :rtype: float
+    """
+
+    return 0

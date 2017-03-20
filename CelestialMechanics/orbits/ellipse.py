@@ -149,3 +149,21 @@ def p(a: float, b: float) -> float:
     :rtype: float
     """
     return b * b / c(a, b)
+
+
+def E(a: float, m1: float, m2: float) -> float:
+    """
+    E = -G * m1 * m2 / (2 * a)
+
+    :param a: semi-major axis
+    :type a: float
+    :param m1: mass 1
+    :type m1: float
+    :param m2: mass 2
+    :type m2: float
+    :return: energy of the 2-body system
+    :rtype: float
+    """
+    from astropy.constants import G
+
+    return -G * m1 * m2 / (2 * a)

@@ -1,6 +1,5 @@
 import numpy as np
-from astropy import constants as astroconst
-from CelestialMechanics.kepler.constants import *
+from CelestialMechanics.kepler.constants import K
 
 
 def T(a: float, m1: float, m2: float) -> float:
@@ -147,4 +146,6 @@ def mu_gm1m2(m1: float, m2: float) -> float:
     :return: mu
     :rtype: float
     """
-    return astroconst.G.value * (m1 + m2)
+    from astropy.constants import G
+
+    return G.value * (m1 + m2)

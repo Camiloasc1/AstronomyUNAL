@@ -5,13 +5,14 @@ from CelestialMechanics.kepler.constants import K
 
 def mu_sun(m2_over_m1: float) -> float:
     """
-    mu = k * (1 + m2/m1)
+    mu = k * sqrt(1 + m2/m1)
 
     :param m2_over_m1:
     :type m2_over_m1:
     :return: mu
     :rtype: float
     """
+
     mu = K * np.sqrt(1. + m2_over_m1)
     return mu * mu
 

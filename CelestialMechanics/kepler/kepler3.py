@@ -1,5 +1,7 @@
 import numpy as np
 
+from astropy import units as u
+
 from CelestialMechanics.mu import mu_sun, mu_gm1m2
 
 
@@ -25,7 +27,7 @@ def T(a: float, m1: float, m2: float) -> float:
 
 def T_sun(a: float, m2_over_m1: float) -> float:
     """
-    T = 2 * pi * sqrt(a^3) / (K * (1 + m2/m1))
+    T = 2 * pi * sqrt(a^3) / (K * sqrt(1 + m2/m1))
 
     :param a: semi-major axis
     :type a: float
@@ -34,10 +36,8 @@ def T_sun(a: float, m2_over_m1: float) -> float:
     :return: translation period
     :rtype: float
     """
-    T = 2 * np.pi * np.sqrt(a * a * a / mu_sun(m2_over_m1))
 
-    T = float(T)
-    return T
+    return 2 * np.pi * np.sqrt(a * a * a / mu_sun(m2_over_m1))
 
 
 def a(T: float, m1: float, m2: float) -> float:
@@ -55,7 +55,6 @@ def a(T: float, m1: float, m2: float) -> float:
     """
     a = T * T * mu_gm1m2(m1, m2) / (4 * np.pi * np.pi)
     a = np.power(a, 1. / 3.)
-
     return a
 
 
@@ -72,8 +71,6 @@ def a_sun(T: float, m2_over_m1: float) -> float:
     """
     a = T * T * mu_sun(m2_over_m1) / (4 * np.pi * np.pi)
     a = np.power(a, 1. / 3.)
-
-    a = float(a)
     return a
 
 
@@ -101,8 +98,7 @@ def n_sun(a: float, m2_over_m1: float) -> float:
     :rtype: float
     """
     n = mu_sun(m2_over_m1) / a / a / a
-    n = np.sqrt(n)
-    n = np.rad2deg(n)
-
-    n = float(n)
+    n = np.sqrt(n) * u.rad
+    # n = np.rad2deg(n * u.d) / u.d
+    n = n.to(u.deg / u.d)
     return n

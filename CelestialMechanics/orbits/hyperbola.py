@@ -118,3 +118,26 @@ def E(a: float, m1: float, m2: float) -> float:
     from astropy.constants import G
 
     return G * m1 * m2 / (2 * a)
+
+
+def v(r: float, a: float, m1: float, m2: float) -> float:
+    """
+    v = sqrt(G * (m1 + m2) * (2 / r + 1 / a))
+
+    :param r: radius vector
+    :type r: float
+    :param a: semi-major axis
+    :type a: float
+    :param m1: mass 1
+    :type m1: float
+    :param m2: mass 2
+    :type m2: float
+    :return: velocity
+    :rtype: float
+    """
+    from CelestialMechanics.mu import mu_gm1m2
+
+    v = mu_gm1m2(m1, m2) * (2 / r + 1 / a)
+    v = np.sqrt(v)
+
+    return v

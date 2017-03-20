@@ -19,6 +19,13 @@ class MyTestCase(unittest.TestCase):
         energy = ellipse.E((0.38709 * u.au).to(u.m), sun, mercury)
         self.assertAlmostEqual(-3.817E32, energy.value, delta=1E32)
 
+        # 4.14
+        a = 17.8
+        e = 0.967
+        q, Q = ellipse.qQ(a, e)
+        self.assertAlmostEqual(0.031478, ellipse.v_sun(q, a, 0), places=5)
+        self.assertAlmostEqual(0.000528, ellipse.v_sun(Q, a, 0), places=5)
+
 
 if __name__ == '__main__':
     unittest.main()

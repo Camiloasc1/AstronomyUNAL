@@ -90,3 +90,24 @@ def E() -> float:
     """
 
     return 0
+
+
+def v(r: float, m1: float, m2: float) -> float:
+    """
+    v = sqrt(2 * G * (m1 + m2) / r)
+
+    :param r: radius vector
+    :type r: float
+    :param m1: mass 1
+    :type m1: float
+    :param m2: mass 2
+    :type m2: float
+    :return: velocity
+    :rtype: float
+    """
+    from CelestialMechanics.mu import mu_gm1m2
+
+    v = 2 * mu_gm1m2(m1, m2) / r
+    v = np.sqrt(v)
+
+    return v

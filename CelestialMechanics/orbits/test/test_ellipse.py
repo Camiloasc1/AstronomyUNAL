@@ -27,6 +27,11 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(0.000528, ellipse.v_sun(Q, a, 0).value, places=5)
         self.assertAlmostEqual(54.50, ellipse.v_sun(q, a, 0).to(u.km / u.s).value, places=2)
         self.assertAlmostEqual(0.91, ellipse.v_sun(Q, a, 0).to(u.km / u.s).value, places=2)
+        vq, vQ = ellipse.vqQ_sun(a, e, 0)
+        self.assertAlmostEqual(0.031478, vq.value, places=2)
+        self.assertAlmostEqual(0.000528, vQ.value, places=2)
+        self.assertAlmostEqual(54.50, vq.to(u.km / u.s).value, places=2)
+        self.assertAlmostEqual(0.91, vQ.to(u.km / u.s).value, places=2)
 
         # 4.15
         a = astroconst.R_earth + 560 * u.km

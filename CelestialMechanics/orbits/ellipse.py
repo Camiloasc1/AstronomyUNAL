@@ -33,10 +33,33 @@ def ae(q: float, Q: float) -> Tuple[float, float]:
     :param Q: apocentric distance
     :type Q: float
     :return: semi-major axis, eccentricity
-    :rtype: float
+    :rtype: (float,float)
     """
     a = (Q + q) / 2
     return a, (Q - q) / (2 * a)
+
+
+def ae_v_sun(vq: float, vQ: float, m2_over_m1: float) -> Tuple[float, float]:
+    """
+    a = (Q + q) / 2
+    e = (Q - q) / (2 * a)
+
+    :param vq: pericentric velocity
+    :type vq: float
+    :param vQ: apocentric velocity
+    :type vQ: float
+    :param m2_over_m1: m2 / m1
+    :type m2_over_m1: float
+    :return: semi-major axis, eccentricity
+    :rtype: (float,float)
+    """
+    from CelestialMechanics.mu import mu_sun
+
+    v = vq / vQ
+    e = (v - 1) / (v + 1)
+    a = mu_sun(m2_over_m1) / vq ** 2 * (1 + e) / (1 - e)
+    a = mu_sun(m2_over_m1) / vQ ** 2 * (1 - e) / (1 + e)
+    return a, e
 
 
 def b(a: float, e: float) -> float:
@@ -201,7 +224,7 @@ def v_sun(r: float, a: float, m2_over_m1: float) -> float:
     :param a: semi-major axis
     :type a: float
     :param m2_over_m1: m2 / m1
-    :type m2: float
+    :type m2_over_m1: float
     :return: velocity
     :rtype: float
     """
@@ -211,3 +234,51 @@ def v_sun(r: float, a: float, m2_over_m1: float) -> float:
     v = np.sqrt(v)
 
     return v
+
+
+def vqQ(a: float, e: float, m1: float, m2: float) -> Tuple[float, float]:
+    """
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param m1: mass 1
+    :type m1: float
+    :param m2: mass 2
+    :type m2: float
+    :return: velocity in q and Q
+    :rtype: (float,float)
+    """
+    from CelestialMechanics.mu import mu_gm1m2
+
+    vq = mu_gm1m2(m1, m2) / a
+    vQ = mu_gm1m2(m1, m2) / a
+    vq *= (1 + e) / (1 - e)
+    vQ *= (1 - e) / (1 + e)
+    vq = np.sqrt(vq)
+    vQ = np.sqrt(vQ)
+    return vq, vQ
+
+
+def vqQ_sun(a: float, e: float, m2_over_m1: float) -> Tuple[float, float]:
+    """
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param m2_over_m1: m2 / m1
+    :type m2_over_m1: float
+    :return: velocity in q and Q
+    :rtype: (float,float)
+    """
+    from CelestialMechanics.mu import mu_sun
+
+    vq = mu_sun(m2_over_m1) / a
+    vQ = mu_sun(m2_over_m1) / a
+    vq *= (1 + e) / (1 - e)
+    vQ *= (1 - e) / (1 + e)
+    vq = np.sqrt(vq)
+    vQ = np.sqrt(vQ)
+    return vq, vQ

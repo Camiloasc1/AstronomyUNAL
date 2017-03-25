@@ -28,9 +28,9 @@ class MyTestCase(unittest.TestCase):
         from CelestialMechanics.orbits import ellipse
         v_q = 56.76 * u.km / u.s
         v_Q = 20.67 * u.km / u.s
-        a, e = ellipse.ae(v_q, v_Q)
+        a, e = ellipse.ae_v_sun(v_q, v_Q, 0)
         self.assertAlmostEqual(0.4661, e.value, places=4)
-        self.assertAlmostEqual(0.75616, a.value, places=5)
+        self.assertAlmostEqual(0.75616, a.to(u.au).value, places=4)
 
     def test_5(self):
         from astropy.constants import R_sun

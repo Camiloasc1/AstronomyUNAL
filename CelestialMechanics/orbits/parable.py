@@ -152,13 +152,9 @@ def solve_FI(S: float) -> float:
     :return: FI
     :rtype: float
     """
-    S = S.to(u.deg)
-    print(S)
-    angle = np.tan(S / 2).value
-    print(type(angle))
-    print(angle)
-    print(angle ** (1. / 3.))  ### Why!!!!
-    return np.arctan(angle ** (1. / 3.))
+    angle = np.tan(S / 2)
+    angle = np.sign(angle) * np.abs(angle) ** (1 / 3)  # fix the issue with negative values
+    return np.arctan(angle)
 
 
 def angle_FI(FI: float) -> float:

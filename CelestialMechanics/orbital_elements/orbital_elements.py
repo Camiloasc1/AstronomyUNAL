@@ -39,7 +39,7 @@ def solve(a: float, e: float, W: float, w: float, i: float, M_r: float, mu: floa
     elif e > 1.:  # Hyperbola
         r, angle, r1, r_angle1 = solve_hyperbola(a, e, mu, t_r, t)
     else:  # Parable
-        r, angle, r1, r_angle1 = solve_parable(a, e, M_r, mu, t_r, t)
+        r, angle, r1, r_angle1 = solve_parable(a, mu, t_r, t)
 
     # x = y = z = r
     # x *= np.cos(W) * np.cos(w + angle) - np.sin(W) * np.sin(w + angle) * np.cos(i)
@@ -114,7 +114,6 @@ def solve_parable(q: float, mu: float, t_r: float, t: float) -> Tuple[float, flo
     C = parable.solve_C(q, mu, t_r, t)
     S = parable.solve_S(C)
     FI = parable.solve_FI(S)
-    print(FI.to(u.deg))
     angle = parable.angle_FI(FI)
     r = parable.r(q, angle)
     r1 = parable.r1(q, angle, mu)

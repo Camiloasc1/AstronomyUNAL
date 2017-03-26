@@ -80,9 +80,9 @@ class MyTestCase(unittest.TestCase):
         t = Time('2014-11-28T00:00:00Z', format='isot', scale='utc').jd * u.d
         r, angle, r1, r_angle1 = solve_parable(q, mu, t_r, t)
         self.assertAlmostEqual(5.190286, r.value, places=5)
-        self.assertAlmostEqual(-6.748472, angle.to(u.deg).value, places=5)
+        self.assertAlmostEqual(-6.748472, angle.to(u.deg).value, places=3)
 
-        (x, y, z), (x1, y1, z1) = solve(a, e, W, w, i, None, mu, t_r, t)
+        (x, y, z), (x1, y1, z1) = solve(q, 1, W, w, i, None, mu, t_r, t)
         self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)
 
 

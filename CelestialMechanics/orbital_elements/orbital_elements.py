@@ -1,7 +1,6 @@
 from typing import List, Tuple
 
 import numpy as np
-
 from astropy import units as u
 
 ROUNDS = 15
@@ -36,7 +35,7 @@ def solve(a: float, e: float, W: float, w: float, i: float, M_r: float, mu: floa
     if e < 1.:  # Ellipse
         r, angle, r1, r_angle1 = solve_ellipse(a, e, M_r, mu, t_r, t)
     elif e > 1.:  # Hyperbola
-        r, angle, r1, r_angle1 = solve_hyperbola(a, e, M_r, mu, t_r, t)
+        r, angle, r1, r_angle1 = solve_hyperbola(a, e, mu, t_r, t)
     else:  # Parable
         r, angle, r1, r_angle1 = solve_parable(a, e, M_r, mu, t_r, t)
 
@@ -84,7 +83,7 @@ def solve_ellipse(a: float, e: float, M_r: float, mu: float, t_r: float, t: floa
     import CelestialMechanics.orbits.ellipse as ellipse
 
     n = ellipse.n(a, mu)
-    M = ellipse.angle_M(M_r, t_r, n, t)
+    M = ellipse.angle_M(M_r, n, t_r, t)
     E = ellipse.solve_E(M, e, ROUNDS)
     r = ellipse.r_E(a, e, E)
     angle = ellipse.angle_E(e, E)
@@ -115,7 +114,8 @@ def solve_parable(a: float, e: float, M_r: float, mu: float, t_r: float, t: floa
     pass
 
 
-def solve_hyperbola(a: float, e: float, M_r: float, mu: float, t_r: float, t: float) -> Tuple[float, float, float, float]:
+def solve_hyperbola(a: float, e: float, mu: float, t_r: float, t: float) -> Tuple[
+    float, float, float, float]:
     """
     Solve inside the orbital plane for the hyperbola case
 
@@ -123,8 +123,6 @@ def solve_hyperbola(a: float, e: float, M_r: float, mu: float, t_r: float, t: fl
     :type a: float
     :param e: eccentricity
     :type e: float
-    :param M_r: mean anomaly at tr
-    :type M_r: float
     :param mu: G * (m1 + m2)
     :type mu: float
     :param t_r: reference time
@@ -134,21 +132,27 @@ def solve_hyperbola(a: float, e: float, M_r: float, mu: float, t_r: float, t: fl
     :return: radius vector, theta angle, r., r theta.
     :rtype: (float, float, float, float)
     """
-    pass
+    import CelestialMechanics.orbits.hyperbola as hyperbola
+
+    Mh = hyperbola.Mh(a, mu, t_r, t)
+    F = hyperbola.solve_F(Mh, e, ROUNDS)
+    r = hyperbola.r_F(a, e, F)
+    angle = hyperbola.angle_F(e, F)
+    r1 = hyperbola.r1(a, e, angle, mu)
+    r_angle1 = hyperbola.r_angle1(a, e, r, mu)
+    return r, angle, r1, r_angle1
 
 
-def SolveE(a: float, e: float, M: float, mu: float, dt: float) -> float:
+def SolveE(a: float, e: float, M: float, mu: float, t_r: float, t: float) -> float:
     if e < 1.:  # Ellipse
         import CelestialMechanics.orbits.ellipse as ellipse
         return ellipse.solve_E(M, e, ROUNDS)
     elif e > 1.:  # Hyperbola
-        Mh = np.sqrt(mu / a ** 3) * dt
-        F = np.arcsinh(1 / e * (2 * Mh))
-        for i in range(ROUNDS):
-            F = np.arcsinh(1 / e * (Mh + F))
-        return F
+        import CelestialMechanics.orbits.hyperbola as hyperbola
+        Mh = hyperbola.Mh(a, mu, t_r, t)
+        return hyperbola.solve_F(Mh, e, ROUNDS)
     else:  # Parable
-        C = np.sqrt(mu / 2 / a ** 3) * dt
+        C = np.sqrt(mu / 2 / a ** 3) * (t - t_r)
         return C
 
 

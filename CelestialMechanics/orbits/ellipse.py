@@ -293,16 +293,14 @@ def n(a: float, mu: float) -> float:
     :param a: semi-major axis
     :type a: float
     :param mu: G * (m1 + m2)
-    :type m1: float
+    :type mu: float
     :return: mean movement
     :rtype: float
     """
-    from CelestialMechanics.mu import mu_gm1m2
-
     return np.sqrt(mu / a ** 3) * u.rad
 
 
-def angle_M(M_r: float, t_r: float, n: float, t: float) -> float:
+def angle_M(M_r: float, n: float, t_r: float, t: float) -> float:
     """
     M = Mr + n * (t - tr)
 
@@ -361,7 +359,7 @@ def r_E(a: float, e: float, E: float) -> float:
 
 def angle_E(e: float, E: float) -> float:
     """
-    thetha = 2 * arctan(sqrt((1 + e) / (1 - e)) * tan(E / 2))
+    theta = 2 * arctan(sqrt((1 + e) / (1 - e)) * tan(E / 2))
 
     :param e: eccentricity
     :type e: float

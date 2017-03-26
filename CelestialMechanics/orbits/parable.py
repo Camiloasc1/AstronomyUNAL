@@ -138,7 +138,7 @@ def r1(q: float, angle: float, mu: float) -> float:
 
 def r_angle1(q: float, r: float, mu: float) -> float:
     """
-    rthetha.= sqrt(2 * q * mu) / r
+    rtheta.= sqrt(2 * q * mu) / r
 
     :param q: pericentric distance
     :type q: float

@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import numpy as np
+from astropy import units as u
 
 
 def r(a: float, e: float, angle: float) -> float:
@@ -22,6 +23,20 @@ def r(a: float, e: float, angle: float) -> float:
 
     r = float(r)
     return r
+
+
+def a(q: float, e: float) -> float:
+    """
+    a = q / (e - 1)
+
+    :param q: pericentric distance
+    :type q: float
+    :param e: eccentricity
+    :type e: float
+    :return: semi-major axis
+    :rtype: float
+    """
+    return q / (e - 1)
 
 
 def q(a: float, e: float) -> float:
@@ -141,6 +156,65 @@ def v(r: float, a: float, m1: float, m2: float) -> float:
     v = np.sqrt(v)
 
     return v
+
+
+def Mh(a: float, mu: float, t_r: float, t: float) -> float:
+    """
+    Mh = sqrt(mu / a ** 3) * (t - t_r)
+
+    :param a: semi-major axis
+    :type a: float
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :param t_r: reference time
+    :type t_r: float
+    :param t: time
+    :type t: float
+    :return: Mh value
+    :rtype: float
+    """
+    Mh = mu / a ** 3
+    Mh = np.sqrt(Mh)
+    Mh *= t - t_r
+    return Mh
+
+
+def solve_F(Mh: float, e: float, ROUNDS: float) -> float:
+    Mh = Mh.value
+    F = np.arcsinh(1 / e * (2 * Mh))
+    for i in range(ROUNDS):
+        F = np.arcsinh(1 / e * (Mh + F))
+    return F * u.rad
+
+
+def r_F(a: float, e: float, F: float) -> float:
+    """
+    r = a * (e * np.cosh(F) - 1)
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param F: eccentric anomaly
+    :type F: float
+    :return: radius vector
+    :rtype: float
+    """
+    return a * (e * np.cosh(F) - 1)
+
+
+def angle_F(e: float, F: float) -> float:
+    """
+    theta = 2 * np.arctan(np.sqrt((e + 1) / (e - 1)) * np.tanh(F / 2))
+
+    :param e: eccentricity
+    :type e: float
+    :param F: eccentric anomaly
+    :type F: float
+    :return: theta angle
+    :rtype: float
+    """
+    return 2 * np.arctan(np.sqrt((e + 1) / (e - 1)) * np.tanh(F / 2))
 
 
 def r1(a: float, e: float, angle: float, mu: float) -> float:

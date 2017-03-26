@@ -375,18 +375,18 @@ def angle_E(e: float, E: float) -> float:
 
 def r1(a: float, e: float, angle: float, mu: float) -> float:
     """
-    r. = sqrt(mu / a / (1 - e * e) * e * np.sin(angle))
+    r. = sqrt(mu / a / (1 - e * e)) * e * sin(angle)
 
     :param a: semi-major axis
     :type a: float
     :param e: eccentricity
     :type e: float
-    :param angle:
-    :type angle:
-    :param mu:
-    :type mu:
-    :return:
-    :rtype:
+    :param angle: theta angle
+    :type angle: float
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :return: r.
+    :rtype: float
     """
     r1 = mu / a / (1 - e * e)
     r1 = np.sqrt(r1)
@@ -406,7 +406,7 @@ def r_angle1(a: float, e: float, r: float, mu: float) -> float:
     :type r: float
     :param mu: G * (m1 + m2)
     :type m1: float
-    :return: r thetha.
+    :return: r theta.
     :rtype: float
     """
     r_angle1 = mu * a * (1 - e * e)

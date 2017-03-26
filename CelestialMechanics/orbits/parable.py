@@ -115,3 +115,41 @@ def v(r: float, m1: float, m2: float) -> float:
     v = np.sqrt(v)
 
     return v
+
+
+def r1(q: float, angle: float, mu: float) -> float:
+    """
+    r. = sqrt(mu / 2 / q) * e * sin(angle)
+
+    :param q: pericentric distance
+    :type q: float
+    :param angle: theta angle
+    :type angle: float
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :return: r.
+    :rtype: float
+    """
+    r1 = mu / 2 / q
+    r1 = np.sqrt(r1)
+    r1 *= np.sin(angle)
+    return r1
+
+
+def r_angle1(q: float, r: float, mu: float) -> float:
+    """
+    rthetha.= sqrt(2 * q * mu) / r
+
+    :param q: pericentric distance
+    :type q: float
+    :param r: radius vector
+    :type r: float
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :return: r.
+    :rtype: float
+    """
+    r_angle1 = 2 * q * mu
+    r_angle1 = np.sqrt(r_angle1)
+    r_angle1 /= r
+    return r_angle1

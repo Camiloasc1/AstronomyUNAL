@@ -141,3 +141,45 @@ def v(r: float, a: float, m1: float, m2: float) -> float:
     v = np.sqrt(v)
 
     return v
+
+
+def r1(a: float, e: float, angle: float, mu: float) -> float:
+    """
+    r. = sqrt(mu / a / (e * e - 1)) * e * sin(angle)
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param angle: theta angle
+    :type angle: float
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :return: r.
+    :rtype: float
+    """
+    r1 = mu / a / (e * e - 1)
+    r1 = np.sqrt(r1)
+    r1 *= e * np.sin(angle)
+    return r1
+
+
+def r_angle1(a: float, e: float, r: float, mu: float) -> float:
+    """
+    rthetha.= sqrt(mu * a * (e * e - 1)) / r
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param r: radius vector
+    :type r: float
+    :param mu: G * (m1 + m2)
+    :type m1: float
+    :return: r theta.
+    :rtype: float
+    """
+    r_angle1 = mu * a * (e * e - 1)
+    r_angle1 = np.sqrt(r_angle1)
+    r_angle1 /= r
+    return r_angle1

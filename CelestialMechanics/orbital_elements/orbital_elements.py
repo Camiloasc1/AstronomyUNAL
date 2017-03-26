@@ -30,7 +30,7 @@ def solve(a: float, e: float, W: float, w: float, i: float, M_r: float, mu: floa
     :type t_r: float
     :param t: time
     :type t: float
-    :return: postion and velocity in (heliocentric ecliptical) rectangular coordinates
+    :return: position and velocity in (heliocentric ecliptical) rectangular coordinates
     :rtype: (float, float, float), (float, float, float)
     """
     if e < 1.:  # Ellipse
@@ -78,7 +78,7 @@ def solve_ellipse(a: float, e: float, M_r: float, mu: float, t_r: float, t: floa
     :type t_r: float
     :param t: time
     :type t: float
-    :return: radius vector, thetha angle, r., rthetha.
+    :return: radius vector, theta angle, r., r theta.
     :rtype: (float, float, float, float)
     """
     import CelestialMechanics.orbits.ellipse as ellipse
@@ -109,7 +109,7 @@ def solve_parable(a: float, e: float, M_r: float, mu: float, t_r: float, t: floa
     :type t_r: float
     :param t: time
     :type t: float
-    :return: radius vector, thetha angle, r., rthetha.
+    :return: radius vector, theta angle, r., r theta.
     :rtype: (float, float, float, float)
     """
     pass
@@ -131,7 +131,7 @@ def solve_hyperbola(a: float, e: float, M_r: float, mu: float, t_r: float, t: fl
     :type t_r: float
     :param t: time
     :type t: float
-    :return: radius vector, thetha angle, r., rthetha.
+    :return: radius vector, theta angle, r., r theta.
     :rtype: (float, float, float, float)
     """
     pass

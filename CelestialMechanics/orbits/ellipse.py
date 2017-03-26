@@ -300,6 +300,20 @@ def n(a: float, mu: float) -> float:
     return np.sqrt(mu / a ** 3) * u.rad
 
 
+def angle_Mr(Lr: float, w_: float) -> float:
+    """
+    Mr = Lr - w_
+
+    :param Lr: mean longitude at t_r
+    :type Lr: float
+    :param w_: longitude of the preriapsis
+    :type w_: float
+    :return: mean anomaly at t_r
+    :rtype: float
+    """
+    return Lr - w_
+
+
 def angle_M(M_r: float, n: float, t_r: float, t: float) -> float:
     """
     M = Mr + n * (t - tr)

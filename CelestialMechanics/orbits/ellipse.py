@@ -1,6 +1,8 @@
 import numpy as np
 from typing import Tuple
 
+from astropy import units as u
+
 
 def r(a: float, e: float, angle: float) -> float:
     """
@@ -194,7 +196,7 @@ def E(a: float, m1: float, m2: float) -> float:
 
 def v(r: float, a: float, m1: float, m2: float) -> float:
     """
-    v = sqrt(G * (m1 + m2)  * (2 / r - 1 / a))
+    v = sqrt(mu  * (2 / r - 1 / a))
 
     :param r: radius vector
     :type r: float
@@ -217,7 +219,7 @@ def v(r: float, a: float, m1: float, m2: float) -> float:
 
 def v_sun(r: float, a: float, m2_over_m1: float) -> float:
     """
-    v = sqrt(G * (m1 + m2) * (2 / r - 1 / a))
+    v = sqrt(mu * (2 / r - 1 / a))
 
     :param r: radius vector
     :type r: float
@@ -282,3 +284,132 @@ def vqQ_sun(a: float, e: float, m2_over_m1: float) -> Tuple[float, float]:
     vq = np.sqrt(vq)
     vQ = np.sqrt(vQ)
     return vq, vQ
+
+
+def n(a: float, mu: float) -> float:
+    """
+    n = np.sqrt(mu / a ** 3)
+
+    :param a: semi-major axis
+    :type a: float
+    :param mu: G * (m1 + m2)
+    :type m1: float
+    :return: mean movement
+    :rtype: float
+    """
+    from CelestialMechanics.mu import mu_gm1m2
+
+    return np.sqrt(mu / a ** 3) * u.rad
+
+
+def angle_M(M_r: float, t_r: float, n: float, t: float) -> float:
+    """
+    M = Mr + n * (t - tr)
+
+    :param M_r: mean anomaly at tr
+    :type M_r: float
+    :param n: mean movement
+    :type n: float
+    :param t_r: reference time
+    :type t_r: float
+    :param t: time
+    :type t: float
+    :return: mean anomaly at t
+    :rtype: float
+    """
+
+    return M_r + n * (t - t_r)
+
+
+def solve_E(M: float, e: float, ROUNDS: float) -> float:
+    """
+    Solve the kepler's equation with:
+    E_n = M + e * np.sin(E_n-1)
+
+    :param M: mean anomaly
+    :type M: float
+    :param e: eccentricity
+    :type e: float
+    :param ROUNDS: steps
+    :type ROUNDS: float
+    :return: eccentric anomaly
+    :rtype: float
+    """
+
+    E = M
+    e = np.rad2deg(e) * u.deg
+    for i in range(ROUNDS):
+        E = M + e * np.sin(E)
+    return E
+
+
+def r_E(a: float, e: float, E: float) -> float:
+    """
+    r = a * (1 - e * cos(E))
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param E: eccentric anomaly
+    :type E: float
+    :return: radius vector
+    :rtype: float
+    """
+    return a * (1 - e * np.cos(E))
+
+
+def angle_E(e: float, E: float) -> float:
+    """
+    thetha = 2 * arctan(sqrt((1 + e) / (1 - e)) * tan(E / 2))
+
+    :param e: eccentricity
+    :type e: float
+    :param E: eccentric anomaly
+    :type E: float
+    :return: theta angle
+    :rtype: float
+    """
+    return 2 * np.arctan(np.sqrt((1 + e) / (1 - e)) * np.tan(E / 2))
+
+
+def r1(a: float, e: float, angle: float, mu: float) -> float:
+    """
+    r. = sqrt(mu / a / (1 - e * e) * e * np.sin(angle))
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param angle:
+    :type angle:
+    :param mu:
+    :type mu:
+    :return:
+    :rtype:
+    """
+    r1 = mu / a / (1 - e * e)
+    r1 = np.sqrt(r1)
+    r1 *= e * np.sin(angle)
+    return r1
+
+
+def r_angle1(a: float, e: float, r: float, mu: float) -> float:
+    """
+    rthetha.= sqrt(mu * a * (1 - e * e)) / r
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param r: radius vector
+    :type r: float
+    :param mu: G * (m1 + m2)
+    :type m1: float
+    :return: r thetha.
+    :rtype: float
+    """
+    r_angle1 = mu * a * (1 - e * e)
+    r_angle1 = np.sqrt(r_angle1)
+    r_angle1 /= r
+    return r_angle1

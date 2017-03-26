@@ -3,6 +3,8 @@ from typing import List, Tuple
 import numpy as np
 from astropy import units as u
 
+from CelestialMechanics.orbits.parable import solve_C
+
 ROUNDS = 15
 
 
@@ -92,16 +94,12 @@ def solve_ellipse(a: float, e: float, M_r: float, mu: float, t_r: float, t: floa
     return r, angle, r1, r_angle1
 
 
-def solve_parable(a: float, e: float, M_r: float, mu: float, t_r: float, t: float) -> Tuple[float, float, float, float]:
+def solve_parable(q: float, mu: float, t_r: float, t: float) -> Tuple[float, float, float, float]:
     """
     Solve inside the orbital plane for the parable case
 
-    :param a: semi-major axis
-    :type a: float
-    :param e: eccentricity
-    :type e: float
-    :param M_r: mean anomaly at tr
-    :type M_r: float
+    :param q: pericentric distance
+    :type q: float
     :param mu: G * (m1 + m2)
     :type mu: float
     :param t_r: reference time
@@ -111,7 +109,17 @@ def solve_parable(a: float, e: float, M_r: float, mu: float, t_r: float, t: floa
     :return: radius vector, theta angle, r., r theta.
     :rtype: (float, float, float, float)
     """
-    pass
+    import CelestialMechanics.orbits.parable as parable
+
+    C = parable.solve_C(q, mu, t_r, t)
+    S = parable.solve_S(C)
+    FI = parable.solve_FI(S)
+    print(FI.to(u.deg))
+    angle = parable.angle_FI(FI)
+    r = parable.r(q, angle)
+    r1 = parable.r1(q, angle, mu)
+    r_angle1 = parable.r_angle1(q, r, mu)
+    return r, angle, r1, r_angle1
 
 
 def solve_hyperbola(a: float, e: float, mu: float, t_r: float, t: float) -> Tuple[
@@ -152,7 +160,7 @@ def SolveE(a: float, e: float, M: float, mu: float, t_r: float, t: float) -> flo
         Mh = hyperbola.Mh(a, mu, t_r, t)
         return hyperbola.solve_F(Mh, e, ROUNDS)
     else:  # Parable
-        C = np.sqrt(mu / 2 / a ** 3) * (t - t_r)
+        C = solve_C(a, mu, t_r, t)
         return C
 
 

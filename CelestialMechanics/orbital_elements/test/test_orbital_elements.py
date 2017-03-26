@@ -6,7 +6,8 @@ from astropy import units as u
 from astropy.time import Time
 
 from CelestialMechanics.mu import mu_gm1m2, mu_sun
-from CelestialMechanics.orbital_elements.orbital_elements import SolveE, solve_ellipse, solve, solve_hyperbola
+from CelestialMechanics.orbital_elements.orbital_elements import SolveE, solve_ellipse, solve, solve_hyperbola, \
+    solve_parable
 import CelestialMechanics.orbits.hyperbola as hyperbola
 
 
@@ -51,7 +52,7 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)
 
     def test_hyperbola(self):
-        # 5.1
+        # 5.4
         q = 0.3016486 * u.au
         e = 1.2998762
         a = hyperbola.a(q, e)
@@ -64,6 +65,22 @@ class MyTestCase(unittest.TestCase):
         r, angle, r1, r_angle1 = solve_hyperbola(a, e, mu, t_r, t)
         self.assertAlmostEqual(6.589548, r.value, places=5)
         self.assertAlmostEqual(133.496551, angle.to(u.deg).value, places=5)
+
+        (x, y, z), (x1, y1, z1) = solve(a, e, W, w, i, None, mu, t_r, t)
+        self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)
+
+    def test_parable(self):
+        # 5.5
+        q = 5.1723060 * u.au
+        i = 0 * u.deg
+        W = 0 * u.deg
+        w = 0 * u.deg
+        mu = mu_sun(0)
+        t_r = Time('2015-01-24T00:00:00Z', format='isot', scale='utc').jd * u.d + 0.08039 * u.d
+        t = Time('2014-11-28T00:00:00Z', format='isot', scale='utc').jd * u.d
+        r, angle, r1, r_angle1 = solve_parable(q, mu, t_r, t)
+        self.assertAlmostEqual(5.190286, r.value, places=5)
+        self.assertAlmostEqual(-6.748472, angle.to(u.deg).value, places=5)
 
         (x, y, z), (x1, y1, z1) = solve(a, e, W, w, i, None, mu, t_r, t)
         self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)

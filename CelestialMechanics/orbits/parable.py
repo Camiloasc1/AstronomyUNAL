@@ -16,11 +16,7 @@ def r(q: float, angle: float) -> float:
     :rtype: float
     """
     angle = np.deg2rad(angle)
-
-    r = 2 * q / (1 + np.cos(angle))
-
-    r = float(r)
-    return r
+    return 2 * q / (1 + np.cos(angle))
 
 
 def angle(q: float, r: float) -> Tuple[float, float]:
@@ -115,6 +111,66 @@ def v(r: float, m1: float, m2: float) -> float:
     v = np.sqrt(v)
 
     return v
+
+
+def solve_C(q: float, mu: float, t_r: float, t: float) -> float:
+    """
+    C = sqrt(mu / 2 / a ** 3) * (t - t_r)
+
+    :param q: pericentric distance
+    :type q: float
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :param t_r: reference time
+    :type t_r: float
+    :param t: time
+    :type t: float
+    :return: C
+    :rtype: float
+    """
+    return np.sqrt(mu / 2 / q ** 3) * (t - t_r)
+
+
+def solve_S(C: float) -> float:
+    """
+    S = arctan(2 / 3 / C)
+
+    :param C: C
+    :type C: float
+    :return: S
+    :rtype: float
+    """
+    return np.arctan(2. / 3. / C)
+
+
+def solve_FI(S: float) -> float:
+    """
+    FI = arctan(tan(S / 2) ** (1. / 3.))
+
+    :param S: S
+    :type S: float
+    :return: FI
+    :rtype: float
+    """
+    S = S.to(u.deg)
+    print(S)
+    angle = np.tan(S / 2).value
+    print(type(angle))
+    print(angle)
+    print(angle ** (1. / 3.))  ### Why!!!!
+    return np.arctan(angle ** (1. / 3.))
+
+
+def angle_FI(FI: float) -> float:
+    """
+    theta = 2 * np.arctan(2 / np.tan(2 * FI))
+
+    :param FI: FI
+    :type FI: float
+    :return: theta angle
+    :rtype: float
+    """
+    return 2 * np.arctan(2 / np.tan(2 * FI))
 
 
 def r1(q: float, angle: float, mu: float) -> float:

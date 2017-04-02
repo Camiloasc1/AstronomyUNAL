@@ -57,10 +57,47 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(90.9563109612867, angles[0].value)
         self.assertAlmostEqual(269.0436890387133, angles[1].value)
 
-        delta_t_t0 = delta_t_t0_aeangle(a, e, angles[0], mu)
+        delta_t_t0 = delta_t_t0_aeangle(a, e, angles[0], mu) % (1 * u.yr).to(u.d)  # module 1 year
         self.assertAlmostEqual((t1 - t0).value, delta_t_t0.value, delta=0.1)
-        delta_t_t0 = delta_t_t0_aeangle(a, e, angles[1], mu)
+        delta_t_t0 = delta_t_t0_aeangle(a, e, angles[1], mu) % (1 * u.yr).to(u.d)  # module 1 year
         self.assertAlmostEqual((t2 - t0).value, delta_t_t0.value, delta=0.1)
+
+        # 5.6
+        a = 17.834144 * u.au
+        e = 0.967143
+        angle = 60 * u.deg
+        mu = mu_sun(0)
+
+        delta_t_t0 = delta_t_t0_aeangle(a, e, angle, mu)
+        self.assertAlmostEqual(23.7573, delta_t_t0.value, places=2)
+
+        # 5.7
+        t0 = Time('2003-10-23T05:57:10Z', format='isot', scale='utc').jd * u.d
+        t1 = Time('2007-06-20T00:00:00Z', format='isot', scale='utc').jd * u.d
+
+        a = 2.56743 * u.au
+        e = 0.75355
+        r = 2.325364 * u.au
+        mu = mu_sun(0)
+
+        angles = ellipse.angle(a, e, r)
+        self.assertAlmostEqual(360 - 226.064389, angles[0].value, places=5)
+        self.assertAlmostEqual(226.064389, angles[1].value, places=5)
+        angle = angles[1]  # r. < 0
+
+        # inlined ellipse.delta_t_t0_aeangle()
+        E = ellipse.E_angle(angle, e)
+        M = ellipse.angle_M_eE(e, E)
+        from CelestialMechanics.kepler.kepler3 import T_sun
+        T = T_sun(a, 0)  # 1 year (of the minor planet)
+        delta_t_t0 = ellipse.delta_t_t0_Mn(M, ellipse.n(a, mu)) % T  # module 1 year (of the minor planet)
+        self.assertAlmostEqual(277.187625, E.to(u.deg).value % 360, places=6)
+        self.assertAlmostEqual(320.023578, M.to(u.deg).value % 360, places=6)
+        self.assertAlmostEqual(((t1 - t0) % T).value, delta_t_t0.value, places=4)
+
+        t0_calculated = t1 - delta_t_t0
+        # print(Time(t0_calculated, format='jd', scale='utc').isot)
+        self.assertAlmostEqual(t0.value, t0_calculated.value, places=4)
 
 
 if __name__ == '__main__':

@@ -493,4 +493,4 @@ def delta_t_t0_aeangle(a: float, e: float, angle: float, mu: float) -> float:
     """
     E = E_angle(angle, e)
     M = angle_M_eE(e, E)
-    return delta_t_t0_Mn(M, n(a, mu)) % (1 * u.yr).to(u.d)  # module 1 year
+    return delta_t_t0_Mn(M, n(a, mu))

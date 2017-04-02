@@ -3,11 +3,12 @@ import unittest
 import numpy as np
 
 from astropy import units as u
+from astropy.coordinates import SkyCoord
 from astropy.time import Time
 
 from CelestialMechanics.mu import mu_gm1m2, mu_sun
 from CelestialMechanics.orbital_elements.orbital_elements import SolveE, solve_ellipse, solve, solve_hyperbola, \
-    solve_parable
+    solve_parable, eclip2ecu
 import CelestialMechanics.orbits.hyperbola as hyperbola
 from CelestialMechanics.orbits import ellipse
 
@@ -125,6 +126,83 @@ class MyTestCase(unittest.TestCase):
 
         (x, y, z), (x1, y1, z1) = solve(q, 1, W, w, i, None, mu, t_r, t)
         self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)
+
+    def test_chapter_5(self):
+        # 5.10
+        a = 0.2714161 * u.au
+        e = 1.1418219
+        i = 0 * u.deg
+        W = 0 * u.deg
+        w = 0 * u.deg
+        mu = mu_sun(0)
+        t_r = Time('2009-03-02T00:00:00Z', format='isot', scale='utc').jd * u.d + 0.5791 * u.d
+        t = Time('2009-06-03T00:00:00Z', format='isot', scale='utc').jd * u.d
+        r, angle, r1, r_angle1 = solve_hyperbola(a, e, mu, t_r, t)
+        self.assertAlmostEqual(3.670381, r.value, places=5)
+        self.assertAlmostEqual(148.883814, angle.to(u.deg).value, places=5)
+        (x, y, z), (x1, y1, z1) = solve(a, e, W, w, i, None, mu, t_r, t)
+        self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)
+
+    def test_chapter_6(self):
+        from CelestialMechanics.kepler import constants
+        # 5.6
+        t_r = Time('2013-08-16T00:00:00Z', format='isot', scale='utc').jd * u.d
+        t = Time('2013-12-01T00:00:00Z', format='isot', scale='utc').jd * u.d
+
+        # Venus
+        a = 0.72332709 * u.au
+        e = 0.00676854
+        i = 3.39464972 * u.deg
+        W = 76.64385978 * u.deg
+        w = 55.16203171 * u.deg
+        M_r = 101.57663166 * u.deg
+        mu = mu_sun(1. / constants.Venus)
+        r, angle, r1, r_angle1 = solve_ellipse(a, e, M_r, mu, t_r, t)
+        self.assertAlmostEqual(0.7231033934034238, r.value)
+        self.assertAlmostEqual(-87.7684496261713, angle.to(u.deg).value)
+        (x, y, z), (x1, y1, z1) = solve(a, e, W, w, i, M_r, mu, t_r, t)
+        self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)
+        venus = np.array([x.to(u.au).value, y.to(u.au).value, z.to(u.au).value]) * u.au
+
+        # Earth-Moon
+        a = 1.00000225 * u.au
+        e = 0.01667663
+        i = 0.00176991 * u.deg
+        W = 178.07928611 * u.deg
+        w = 284.87149742 * u.deg
+        M_r = 221.40784487 * u.deg
+        mu = mu_sun(1. / constants.Earth_Moon)
+        r, angle, r1, r_angle1 = solve_ellipse(a, e, M_r, mu, t_r, t)
+        self.assertAlmostEqual(0.9861218868042078, r.value)
+        self.assertAlmostEqual(-34.195316641554065, angle.to(u.deg).value)
+        (x, y, z), (x1, y1, z1) = solve(a, e, W, w, i, M_r, mu, t_r, t)
+        self.assertAlmostEqual(r.value, np.sqrt(x * x + y * y + z * z).value)
+        earth_moon = np.array([x.to(u.au).value, y.to(u.au).value, z.to(u.au).value]) * u.au
+
+        (x, y, z) = venus - earth_moon
+        x, y, z = eclip2ecu(x, y, z)
+        self.assertAlmostEqual(0.44725, np.sqrt(x * x + y * y + z * z).value, places=5)  # rho
+        coord = SkyCoord(x=x, y=y, z=z, unit='au', representation='cartesian')
+        coord.representation = 'spherical'
+
+        spected = SkyCoord('19h33m52.34s', '-24d40m42.43s', distance=0.44725 * u.au)
+        self.assertAlmostEqual(spected.ra.value, coord.ra.value, places=5)
+        self.assertAlmostEqual(spected.ra.value, coord.spherical.lon.value, places=5)
+        self.assertAlmostEqual(spected.dec.value, coord.dec.value, places=5)
+        self.assertAlmostEqual(spected.dec.value, coord.spherical.lat.value, places=5)
+        self.assertAlmostEqual(spected.distance.value, coord.spherical.distance.value, places=5)  # rho
+
+        # print(coord)
+        # print(coord.to_string('hmsdms'))
+
+    def test_eclip2ecu(self):
+        x = 1.0559276 * u.au
+        y = 1.0054148 * u.au
+        z = -0.0048456 * u.au
+        x, y, z = eclip2ecu(x, y, z)
+        self.assertAlmostEqual(1.0559276, x.value)
+        self.assertAlmostEqual(0.924377593, y.value)
+        self.assertAlmostEqual(0.3954851, z.value)
 
 
 if __name__ == '__main__':

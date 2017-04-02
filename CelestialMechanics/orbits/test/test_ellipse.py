@@ -2,8 +2,11 @@ import unittest
 
 from astropy import constants as astroconst
 from astropy import units as u
-from CelestialMechanics.orbits import ellipse
+from astropy.time import Time
+
 from CelestialMechanics.kepler import constants
+from CelestialMechanics.orbits import ellipse
+from CelestialMechanics.orbits.ellipse import delta_t_t0_aeangle
 
 
 class MyTestCase(unittest.TestCase):
@@ -36,6 +39,28 @@ class MyTestCase(unittest.TestCase):
         # 4.15
         a = astroconst.R_earth + 560 * u.km
         self.assertAlmostEqual(7569.5, ellipse.v(a, a, astroconst.M_earth, 0).value, delta=20)
+
+    def test_chapter_5(self):
+        from CelestialMechanics.mu import mu_sun
+
+        # 5.5
+        t0 = Time('2014-01-03T00:00:00Z', format='isot', scale='utc').jd * u.d + 0.633 * u.d
+        t1 = Time('2014-04-03T00:00:00Z', format='isot', scale='utc').jd * u.d + 0.9 * u.d
+        t2 = Time('2014-10-05T00:00:00Z', format='isot', scale='utc').jd * u.d + 0.5 * u.d
+
+        a = 1 * u.au
+        e = 0.01669
+        r = 1 * u.au
+        mu = mu_sun(1 / constants.Earth_Moon)
+
+        angles = ellipse.angle(a, e, r)
+        self.assertAlmostEqual(90.9563109612867, angles[0].value)
+        self.assertAlmostEqual(269.0436890387133, angles[1].value)
+
+        delta_t_t0 = delta_t_t0_aeangle(a, e, angles[0], mu)
+        self.assertAlmostEqual((t1 - t0).value, delta_t_t0.value, delta=0.1)
+        delta_t_t0 = delta_t_t0_aeangle(a, e, angles[1], mu)
+        self.assertAlmostEqual((t2 - t0).value, delta_t_t0.value, delta=0.1)
 
 
 if __name__ == '__main__':

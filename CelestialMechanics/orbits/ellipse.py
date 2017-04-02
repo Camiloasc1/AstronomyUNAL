@@ -25,6 +25,14 @@ def r(a: float, e: float, angle: float) -> float:
     return r
 
 
+def angle(a: float, e: float, r: float) -> Tuple[float, float]:
+    angle = a * (1 - e * e) - r
+    angle /= e * r
+    angle = np.arccos(angle)
+    angle = angle.to(u.deg)
+    return angle, (360. * u.deg) - angle
+
+
 def ae(q: float, Q: float) -> Tuple[float, float]:
     """
     a = (Q + q) / 2
@@ -333,6 +341,21 @@ def angle_M(M_r: float, n: float, t_r: float, t: float) -> float:
     return M_r + n * (t - t_r)
 
 
+def angle_M_eE(e: float, E: float) -> float:
+    """
+
+    :param e: eccentricity
+    :type e: float
+    :param E: eccentric anomaly
+    :type E: float
+    :return: mean anomaly
+    :rtype: float
+    """
+
+    e = np.rad2deg(e) * u.deg
+    return E - e * np.sin(E)
+
+
 def solve_E(M: float, e: float, ROUNDS: float) -> float:
     """
     Solve the kepler's equation with:
@@ -425,3 +448,49 @@ def r_angle1(a: float, e: float, r: float, mu: float) -> float:
     r_angle1 = np.sqrt(r_angle1)
     r_angle1 /= r
     return r_angle1
+
+
+def E_angle(angle: float, e: float) -> float:
+    """
+    E = 2 * arctan(np.sqrt((1 - e) / (1 + e)) * tan(theta / 2))
+
+    :param angle: true anomaly
+    :type angle: float
+    :param e: eccentricity
+    :type e: float
+    :return: eccentric anomaly
+    :rtype: float
+    """
+    return 2 * np.arctan(np.sqrt((1 - e) / (1 + e)) * np.tan(angle / 2))
+
+
+def delta_t_t0_Mn(M: float, n: float) -> float:
+    """
+
+    :param M: mean anomaly
+    :type M: float
+    :param n: mean movement
+    :type n: float
+    :return: t - t0
+    :rtype: float
+    """
+    return M / n
+
+
+def delta_t_t0_aeangle(a: float, e: float, angle: float, mu: float) -> float:
+    """
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param angle: true anomaly
+    :type angle: float
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :return: t - t0
+    :rtype: float
+    """
+    E = E_angle(angle, e)
+    M = angle_M_eE(e, E)
+    return delta_t_t0_Mn(M, n(a, mu)) % (1 * u.yr).to(u.d)  # module 1 year

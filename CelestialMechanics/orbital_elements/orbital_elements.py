@@ -5,7 +5,7 @@ from astropy import units as u
 
 from CelestialMechanics.orbits.parable import solve_C
 
-ROUNDS = 15
+ROUNDS = 100
 
 
 def solve(a: float, e: float, W: float, w: float, i: float, M_r: float, mu: float, t_r: float, t: float) -> Tuple[

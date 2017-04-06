@@ -21,7 +21,7 @@ def T(a: float, m1: float, m2: float) -> float:
     T = (4 * np.pi * np.pi) / (mu_gm1m2(m1, m2)) * a * a * a
     T = np.sqrt(T)
 
-    T = float(T)
+    # T = float(T)
     return T
 
 

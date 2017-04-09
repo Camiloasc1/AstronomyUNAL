@@ -19,7 +19,7 @@ def r(q: float, angle: float) -> float:
     return 2 * q / (1 + np.cos(angle))
 
 
-def angle(q: float, r: float) -> Tuple[float, float]:
+def angles(q: float, r: float) -> Tuple[float, float]:
     """
     cos(angle) = 2 * q / r - 1
     angle = arccos(2 * q / r - 1)
@@ -159,7 +159,7 @@ def solve_FI(S: float) -> float:
 
 def angle_FI(FI: float) -> float:
     """
-    theta = 2 * np.arctan(2 / np.tan(2 * FI))
+    theta = 2 * arctan(2 / tan(2 * FI))
 
     :param FI: FI
     :type FI: float
@@ -167,6 +167,30 @@ def angle_FI(FI: float) -> float:
     :rtype: float
     """
     return 2 * np.arctan(2 / np.tan(2 * FI))
+
+
+def FI_angle(angle: float) -> float:
+    """
+    FI = arctan(2 / tan(angle / 2)) / 2
+
+    :param angle: theta angle
+    :type angle: float
+    :return: FI angle
+    :rtype: float
+    """
+    return np.arctan(2 / np.tan(angle / 2)) / 2
+
+
+def S_FI(FI: float) -> float:
+    """
+    S = 2 * arctan(tan(FI) ** 3)
+
+    :param FI: FI angle
+    :type FI: float
+    :return: S angle
+    :rtype: float
+    """
+    return 2 * np.arctan(np.tan(FI) ** 3)
 
 
 def r1(q: float, angle: float, mu: float) -> float:
@@ -205,3 +229,19 @@ def r_angle1(q: float, r: float, mu: float) -> float:
     r_angle1 = np.sqrt(r_angle1)
     r_angle1 /= r
     return r_angle1
+
+
+def t0(S, t_r, n):
+    """
+    t0 = t_r - M_r / n
+
+    :param S: S angle
+    :type S: float
+    :param t_r: reference time
+    :type t_r: float
+    :param n: mean movement
+    :type n: float
+    :return: t0
+    :rtype: float
+    """
+    return t_r - 2 / 3 * np.sqrt(2) / n / np.tan(S)

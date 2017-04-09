@@ -74,7 +74,7 @@ e = 0.01669
 r = 1 * u.au
 mu = mu_sun(1 / constants.Earth_Moon)
 
-angles = ellipse.angle(a, e, r)
+angles = ellipse.angles(a, e, r)
 print('theta1', angles[0])
 print('theta2', angles[1])
 

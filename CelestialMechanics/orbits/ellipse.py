@@ -25,7 +25,19 @@ def r(a: float, e: float, angle: float) -> float:
     return r
 
 
-def angle(a: float, e: float, r: float) -> Tuple[float, float]:
+def angles(a: float, e: float, r: float) -> Tuple[float, float]:
+    """
+    theta = arccos((a * (1 - e * e) - r) / (e * r))
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param r: radius vector
+    :type r: float
+    :return: the two theta angles
+    :rtype: (float, float)
+    """
     angle = a * (1 - e * e) - r
     angle /= e * r
     angle = np.arccos(angle)
@@ -343,6 +355,7 @@ def angle_M(M_r: float, n: float, t_r: float, t: float) -> float:
 
 def angle_M_eE(e: float, E: float) -> float:
     """
+    M = E - e * np.sin(E)
 
     :param e: eccentricity
     :type e: float
@@ -352,7 +365,8 @@ def angle_M_eE(e: float, E: float) -> float:
     :rtype: float
     """
 
-    e = np.rad2deg(e) * u.deg
+    # e = np.rad2deg(e * u.rad)
+    e = e * u.rad
     return E - e * np.sin(E)
 
 
@@ -372,7 +386,8 @@ def solve_E(M: float, e: float, ROUNDS: float) -> float:
     """
 
     E = M
-    e = np.rad2deg(e) * u.deg
+    # e = np.rad2deg(e) * u.deg
+    e = e * u.rad
     for i in range(ROUNDS):
         E = M + e * np.sin(E)
     return E
@@ -406,6 +421,20 @@ def angle_E(e: float, E: float) -> float:
     :rtype: float
     """
     return 2 * np.arctan(np.sqrt((1 + e) / (1 - e)) * np.tan(E / 2))
+
+
+def E_angle(e: float, angle: float) -> float:
+    """
+    E = 2 * arctan(np.sqrt((1 - e) / (1 + e)) * tan(theta / 2))
+
+    :param angle: true anomaly
+    :type angle: float
+    :param e: eccentricity
+    :type e: float
+    :return: eccentric anomaly
+    :rtype: float
+    """
+    return 2 * np.arctan(np.sqrt((1 - e) / (1 + e)) * np.tan(angle / 2))
 
 
 def r1(a: float, e: float, angle: float, mu: float) -> float:
@@ -450,20 +479,6 @@ def r_angle1(a: float, e: float, r: float, mu: float) -> float:
     return r_angle1
 
 
-def E_angle(angle: float, e: float) -> float:
-    """
-    E = 2 * arctan(np.sqrt((1 - e) / (1 + e)) * tan(theta / 2))
-
-    :param angle: true anomaly
-    :type angle: float
-    :param e: eccentricity
-    :type e: float
-    :return: eccentric anomaly
-    :rtype: float
-    """
-    return 2 * np.arctan(np.sqrt((1 - e) / (1 + e)) * np.tan(angle / 2))
-
-
 def delta_t_t0_Mn(M: float, n: float) -> float:
     """
 
@@ -491,6 +506,22 @@ def delta_t_t0_aeangle(a: float, e: float, angle: float, mu: float) -> float:
     :return: t - t0
     :rtype: float
     """
-    E = E_angle(angle, e)
+    E = E_angle(e, angle)
     M = angle_M_eE(e, E)
     return delta_t_t0_Mn(M, n(a, mu))
+
+
+def t0(M_r: float, t_r: float, n: float) -> float:
+    """
+    t0 = t_r - M_r / n
+
+    :param M_r: mean anomaly at t_r
+    :type M_r: float
+    :param t_r: reference time
+    :type t_r: float
+    :param n: mean movement
+    :type n: float
+    :return: t0
+    :rtype: float
+    """
+    return t_r - M_r / n

@@ -25,6 +25,26 @@ def r(a: float, e: float, angle: float) -> float:
     return r
 
 
+def angles(a: float, e: float, r: float) -> Tuple[float, float]:
+    """
+    theta = arccos((a * (e * e - 1) - r) / (e * r))
+
+    :param a: semi-major axis
+    :type a: float
+    :param e: eccentricity
+    :type e: float
+    :param r: radius vector
+    :type r: float
+    :return: the two theta angles
+    :rtype: (float, float)
+    """
+    angle = a * (e * e - 1) - r
+    angle /= e * r
+    angle = np.arccos(angle)
+    angle = angle.to(u.deg)
+    return angle, (360. * u.deg) - angle
+
+
 def a(q: float, e: float) -> float:
     """
     a = q / (e - 1)
@@ -170,13 +190,28 @@ def Mh(a: float, mu: float, t_r: float, t: float) -> float:
     :type t_r: float
     :param t: time
     :type t: float
-    :return: Mh value
+    :return: Mh angle
     :rtype: float
     """
     Mh = mu / a ** 3
     Mh = np.sqrt(Mh)
     Mh *= t - t_r
     return Mh
+
+
+def angle_Mh_eF(e: float, F: float) -> float:
+    """
+    Mh = e * sinh(F) - F
+
+    :param e: eccentricity
+    :type e: float
+    :param F: eccentric anomaly
+    :type F: float
+    :return: Mh angle
+    :rtype: float
+    """
+    e = e * u.rad
+    return e * np.sinh(F) - F
 
 
 def solve_F(Mh: float, e: float, ROUNDS: float) -> float:
@@ -215,6 +250,20 @@ def angle_F(e: float, F: float) -> float:
     :rtype: float
     """
     return 2 * np.arctan(np.sqrt((e + 1) / (e - 1)) * np.tanh(F / 2))
+
+
+def F_angle(e: float, angle: float) -> float:
+    """
+    F = 2 * np.arctan(np.sqrt((e - 1) / (e + 1)) * np.tanh(angle / 2))
+
+    :param e: eccentricity
+    :type e: float
+    :param angle: theta angle
+    :type angle: float
+    :return: eccentric anomaly
+    :rtype: float
+    """
+    return 2 * np.arctan(np.sqrt((e - 1) / (e + 1)) * np.tanh(angle / 2))
 
 
 def r1(a: float, e: float, angle: float, mu: float) -> float:
@@ -257,3 +306,19 @@ def r_angle1(a: float, e: float, r: float, mu: float) -> float:
     r_angle1 = np.sqrt(r_angle1)
     r_angle1 /= r
     return r_angle1
+
+
+def t0(Mh_r: float, t_r: float, n: float) -> float:
+    """
+    t0 = t_r - M_r / n
+
+    :param Mh_r: mean anomaly at t_r
+    :type Mh_r: float
+    :param t_r: reference time
+    :type t_r: float
+    :param n: mean movement
+    :type n: float
+    :return: t0
+    :rtype: float
+    """
+    return t_r - Mh_r / n

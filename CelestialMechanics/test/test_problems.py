@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
         from CelestialMechanics.orbits import parable
         q = 0.06727709 * u.au
         r = 2.33987471 * u.au
-        angle1, angle2 = parable.angle(q, r)
+        angle1, angle2 = parable.angles(q, r)
         self.assertAlmostEqual(199.5251056, angle2.value, places=7)
 
     def test_4(self):

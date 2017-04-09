@@ -53,7 +53,7 @@ class MyTestCase(unittest.TestCase):
         r = 1 * u.au
         mu = mu_sun(1 / constants.Earth_Moon)
 
-        angles = ellipse.angle(a, e, r)
+        angles = ellipse.angles(a, e, r)
         self.assertAlmostEqual(90.9563109612867, angles[0].value)
         self.assertAlmostEqual(269.0436890387133, angles[1].value)
 
@@ -80,13 +80,13 @@ class MyTestCase(unittest.TestCase):
         r = 2.325364 * u.au
         mu = mu_sun(0)
 
-        angles = ellipse.angle(a, e, r)
+        angles = ellipse.angles(a, e, r)
         self.assertAlmostEqual(360 - 226.064389, angles[0].value, places=5)
         self.assertAlmostEqual(226.064389, angles[1].value, places=5)
         angle = angles[1]  # r. < 0
 
         # inlined ellipse.delta_t_t0_aeangle()
-        E = ellipse.E_angle(angle, e)
+        E = ellipse.E_angle(e, angle)
         M = ellipse.angle_M_eE(e, E)
         from CelestialMechanics.kepler.kepler3 import T_sun
         T = T_sun(a, 0)  # 1 year (of the minor planet)

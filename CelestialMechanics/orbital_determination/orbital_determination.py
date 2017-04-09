@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 import numpy as np
 from astropy import units as u
 
@@ -5,7 +7,22 @@ from CelestialMechanics.orbits import ellipse, parable, hyperbola
 from CelestialMechanics import util
 
 
-def solve(r_, r1_, mu, t):
+def solve(r_: List[float], r1_: List[float], mu: float, t: float) -> Tuple[
+    float, float, float, float, float, float, float]:
+    """
+    Determine the orbital elements of the object
+
+    :param r_: radius vector
+    :type r_: (float, float, float)
+    :param r1_: velocity vector
+    :type r1_: (float, float, float)
+    :param mu: G * (m1 + m2)
+    :type mu: float
+    :param t: time of the observation
+    :type t: float
+    :return: (a, e, i, W, w, M_r, t0)
+    :rtype: (float, float, float, float, float, float, float)
+    """
     h_ = util.cross(r_, r1_)
 
     h = util.norm(h_)

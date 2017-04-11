@@ -135,9 +135,10 @@ def solve_gauss(r_1: List[float], r_2: List[float], r_3: List[float], mu: float,
     H, K = np.linalg.solve(a, b)
 
     w = np.arctan2(K, H) * u.rad
-    e = np.sqrt(H * H + K * K)
+    e = np.sqrt(H * H + K * K) * (u.d / u.d)  # Dimensionless
     a = (r1 + util.dot(r_1, n_) * H + util.dot(r_1, m_) * K) / (1 - e * e)
     angles = ellipse.angles(a, e, r1)
+    # TODO check cuadrant
     # angle = util.angle_cuadrant(angles, r_, r1_)
     angle = angles[0]
     E = ellipse.E_angle(e, angle)

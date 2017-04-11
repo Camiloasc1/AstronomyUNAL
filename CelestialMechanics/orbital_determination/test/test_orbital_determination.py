@@ -6,7 +6,7 @@ from astropy.time import Time
 
 from CelestialMechanics.mu import mu_sun
 from CelestialMechanics.kepler import constants
-from CelestialMechanics.orbital_determination.orbital_determination import solve
+from CelestialMechanics.orbital_determination.orbital_determination import solve, solve_gauss
 
 
 class MyTestCase(unittest.TestCase):
@@ -79,6 +79,23 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(0.00201190, x1.value, places=4)
         self.assertAlmostEqual(0, y1.value)
         self.assertAlmostEqual(-0.0001434, z1.value, places=5)
+
+    def test_gauss(self):
+        t1 = Time('2013-04-10T00:00:00', format='isot', scale='tt').jd * u.d
+
+        r_1 = [2.1233484, -0.7935677, 0.4372058] * u.au
+        r_2 = [2.1450400, -0.6739860, 0.4174729] * u.au
+        r_3 = [2.1555124, -0.6014181, 0.4051345] * u.au
+
+        a, e, i, W, w, M_r, t0 = solve_gauss(r_1, r_2, r_3, mu_sun(0), t1)
+        self.assertAlmostEqual(215.4785322, W.to(u.deg).value % 360, places=3)
+        self.assertAlmostEqual(13.1011075, i.to(u.deg).value % 360, places=4)
+        self.assertAlmostEqual(180.4021798, w.to(u.deg).value % 360, delta=1)
+        self.assertAlmostEqual(0.2476931, e.value, places=2)
+        self.assertAlmostEqual(2.7898982, a.to(u.au).value, places=1)
+        # TODO fix these both
+        self.assertAlmostEqual(324.3914010, M_r.to(u.deg).value, places=7)
+        self.assertAlmostEqual(2454858.7869853, t0.to(u.d).value, places=7)
 
 
 if __name__ == '__main__':

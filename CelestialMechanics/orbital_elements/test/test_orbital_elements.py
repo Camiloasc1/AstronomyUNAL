@@ -8,7 +8,8 @@ from astropy.time import Time
 
 from CelestialMechanics.mu import mu_gm1m2, mu_sun
 from CelestialMechanics.orbital_elements.orbital_elements import SolveE, solve_ellipse, solve, solve_hyperbola, \
-    solve_parable, eclip2ecu
+    solve_parable
+from CelestialMechanics.coordinates import eclip2ecu
 import CelestialMechanics.orbits.hyperbola as hyperbola
 from CelestialMechanics.orbits import ellipse
 
@@ -194,15 +195,6 @@ class MyTestCase(unittest.TestCase):
 
         # print(coord)
         # print(coord.to_string('hmsdms'))
-
-    def test_eclip2ecu(self):
-        x = 1.0559276 * u.au
-        y = 1.0054148 * u.au
-        z = -0.0048456 * u.au
-        x, y, z = eclip2ecu(x, y, z)
-        self.assertAlmostEqual(1.0559276, x.value)
-        self.assertAlmostEqual(0.924377593, y.value)
-        self.assertAlmostEqual(0.3954851, z.value)
 
 
 if __name__ == '__main__':

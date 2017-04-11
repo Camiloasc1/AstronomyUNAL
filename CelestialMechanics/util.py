@@ -17,6 +17,20 @@ def cross(a: List[float], b: List[float]) -> List[float]:
     return np.cross(a, b) * a.unit * b.unit
 
 
+def dot(a: List[float], b: List[float]) -> float:
+    """
+    np.dot(a, b) keeping the units
+
+    :param a: vector a
+    :type a: list
+    :param b: vector b
+    :type b: list
+    :return: np.dot(a, b)
+    :rtype: float
+    """
+    return np.dot(a, b) * a.unit * b.unit
+
+
 def norm(a: List[float]) -> float:
     """
     np.linalg.norm(a) keeping the units

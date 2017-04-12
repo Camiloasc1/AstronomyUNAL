@@ -138,10 +138,8 @@ def solve_gauss(r_1: List[float], r_2: List[float], r_3: List[float], mu: float,
     e = np.sqrt(H * H + K * K) * (u.d / u.d)  # Dimensionless
     a = (r1 + util.dot(r_1, n_) * H + util.dot(r_1, m_) * K) / (1 - e * e)
     angles = ellipse.angles(a, e, r1)
-    # TODO check cuadrant
-    # angle = util.angle_cuadrant(angles, r_, r1_)
-    angle = angles[0]
+    angle = angles[0 if r2 > r1 else 1]
     E = ellipse.E_angle(e, angle)
-    M_r = ellipse.angle_M_eE(e, E)
+    M_r = ellipse.angle_M_eE(e, E) % (360 * u.deg)
     t0 = ellipse.t0(M_r, t1, ellipse.n(a, mu))
     return a, e, i, W, w, M_r, t0

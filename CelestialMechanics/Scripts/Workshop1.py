@@ -1,26 +1,19 @@
-import numpy as np
-
 from astropy import units as u
-from astropy.time import Time
 from astropy.coordinates import SkyCoord
+from astropy.time import Time
 
-from CelestialMechanics.coordinates import ecu2eclip
+from CelestialMechanics.coordinates import ecu2eclip_, SkyCoord2xyz
 from CelestialMechanics.mu import mu_sun
 from CelestialMechanics.orbital_determination.orbital_determination import solve_gauss
-
-
-def SkyCoord2xyz(c):
-    return [c.cartesian.x.to(u.au).value, c.cartesian.y.to(u.au).value, c.cartesian.z.to(u.au).value] * u.au
-
 
 c_1 = SkyCoord('02h54m23.18s', '+17d03m19.53s', distance=2.236612957 * u.au)
 c_2 = SkyCoord('03h08m30.88s', '+18d05m15.88s', distance=2.265868176 * u.au)
 c_3 = SkyCoord('03h25m34.90s', '+19d14m01.58s', distance=2.300057744 * u.au)
 
 # To x,y,z
-c_1 = ecu2eclip(SkyCoord2xyz(c_1))
-c_2 = ecu2eclip(SkyCoord2xyz(c_2))
-c_3 = ecu2eclip(SkyCoord2xyz(c_3))
+c_1 = ecu2eclip_(SkyCoord2xyz(c_1))
+c_2 = ecu2eclip_(SkyCoord2xyz(c_2))
+c_3 = ecu2eclip_(SkyCoord2xyz(c_3))
 
 t1 = Time('2017-04-02T00:00:00Z', format='isot', scale='utc').jd * u.d
 t2 = Time('2017-04-07T00:00:00Z', format='isot', scale='utc').jd * u.d
@@ -44,8 +37,9 @@ r_3 = earth_3 + c_3
 a, e, i, W, w, M_r, t0 = solve_gauss(r_1, r_2, r_3, mu_sun(0), t1)
 print('a', a)
 print('e', e)
-print('i', i)
-print('W', W)
-print('w', w)
-print('M_r', M_r)
+print('i', i.to(u.deg))
+print('W', W.to(u.deg))
+print('w', w.to(u.deg))
+print('M_r', M_r.to(u.deg))
 print('t0', t0)
+print(Time(t0, format='jd', scale='utc').isot)

@@ -53,3 +53,7 @@ def ecu2eclip(x, y, z):
            [z.value]] * x.unit
     x, y, z = util.matmul(S, geo)
     return (x, y, z)
+
+
+def SkyCoord2xyz(c):
+    return [c.cartesian.x.to(u.au).value, c.cartesian.y.to(u.au).value, c.cartesian.z.to(u.au).value] * u.au

@@ -122,13 +122,12 @@ class MyTestCase(unittest.TestCase):
         r_3 = [2.1555124, -0.6014181, 0.4051345] * u.au
 
         a, e, i, W, w, M_r, t0 = solve_gauss(r_1, r_2, r_3, mu_sun(0), t1)
-        self.assertAlmostEqual(215.4785322, W.to(u.deg).value % 360, places=3)
-        self.assertAlmostEqual(13.1011075, i.to(u.deg).value % 360, places=4)
-        self.assertAlmostEqual(180.4021798, w.to(u.deg).value % 360, delta=1)
+        self.assertAlmostEqual(215.4785322, W.to(u.deg).value, places=3)
+        self.assertAlmostEqual(13.1011075, i.to(u.deg).value, places=4)
+        self.assertAlmostEqual(180.4021798, w.to(u.deg).value, delta=1)
         self.assertAlmostEqual(0.2476931, e.value, places=2)
         self.assertAlmostEqual(2.7898982, a.to(u.au).value, places=1)
-        # TODO fix these both
-        self.assertAlmostEqual(324.3914010, M_r.to(u.deg).value % 360, delta=1)
+        self.assertAlmostEqual(324.3914010, M_r.to(u.deg).value, delta=1)
         self.assertAlmostEqual(2454858.7869853, t0.to(u.d).value, delta=11)
 
 

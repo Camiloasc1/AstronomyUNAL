@@ -34,7 +34,7 @@ def solve(r_: List[float], r1_: List[float], mu: float, t: float) -> Tuple[
     if np.isclose(D.value, 2):  # Parable
         a = h * h / 2 / mu
         e_ = -util.cross(h_, r1_) / mu - r_ / r
-        e = 1
+        e = 1 * (u.d / u.d)
     elif D.value < 2:  # Ellipse
         a = r / (2 - D)
         e_ = -util.cross(h_, r1_) / mu - r_ / r
@@ -79,6 +79,10 @@ def solve(r_: List[float], r1_: List[float], mu: float, t: float) -> Tuple[
         i = np.arccos(h_[2] / h)
         W = np.arctan2(h_[0], -h_[1])
         w = np.arctan2(e_[2] * h, -e_[0] * h_[1] + e_[1] * h_[0])
+
+    W = W % (360 * u.deg)
+    w = w % (360 * u.deg)
+    M_r = M_r % (360 * u.deg) if M_r else None
     return a, e, i, W, w, M_r, t0
 
 
@@ -134,12 +138,16 @@ def solve_gauss(r_1: List[float], r_2: List[float], r_3: List[float], mu: float,
     b = [(r2 - r1).to(u.au).value, (r3 - r1).to(u.au).value]
     H, K = np.linalg.solve(a, b)
 
-    w = np.arctan2(K, H) * u.rad
+    w = np.arctan2(K, H) * u.rad % (360 * u.deg)
     e = np.sqrt(H * H + K * K) * (u.d / u.d)  # Dimensionless
     a = (r1 + util.dot(r_1, n_) * H + util.dot(r_1, m_) * K) / (1 - e * e)
     angles = ellipse.angles(a, e, r1)
     angle = angles[0 if r2 > r1 else 1]
     E = ellipse.E_angle(e, angle)
-    M_r = ellipse.angle_M_eE(e, E) % (360 * u.deg)
+    M_r = ellipse.angle_M_eE(e, E)
+    M_r = M_r % (360 * u.deg)
     t0 = ellipse.t0(M_r, t1, ellipse.n(a, mu))
+
+    W = W % (360 * u.deg)
+    w = w % (360 * u.deg)
     return a, e, i, W, w, M_r, t0

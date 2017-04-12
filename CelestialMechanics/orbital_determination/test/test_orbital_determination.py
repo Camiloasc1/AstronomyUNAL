@@ -4,13 +4,14 @@ import numpy as np
 from astropy import units as u
 from astropy.time import Time
 
+from CelestialMechanics.coordinates import ecu2eclip_
 from CelestialMechanics.mu import mu_sun
 from CelestialMechanics.kepler import constants
 from CelestialMechanics.orbital_determination.orbital_determination import solve, solve_gauss
 
 
 class MyTestCase(unittest.TestCase):
-    def test_something(self):
+    def test_examples(self):
         # 8.1
         r = [2.77904683, -4.28963554, -0.04438092] * u.au
         r1 = [0.00624498, 0.00446529, -0.00015828] * u.au / u.d
@@ -79,6 +80,39 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEqual(0.00201190, x1.value, places=4)
         self.assertAlmostEqual(0, y1.value)
         self.assertAlmostEqual(-0.0001434, z1.value, places=5)
+
+    def test_problems(self):
+        # 8.1
+        r_ = [-2.32791156, -0.80227612, -0.35673637] * u.au
+        r_ = ecu2eclip_(r_)
+        r1_ = [0.00554700, -0.00883579, -0.00261369] * u.au / u.d
+        r1_ = ecu2eclip_(r1_)
+        t_r = Time('2015-06-26T00:00:00', format='isot', scale='tt').jd * u.d
+        mu = mu_sun(0)
+
+        a, e, i, W, w, M_r, t0 = solve(r_, r1_, mu, t_r)
+        self.assertAlmostEqual(2.42152141, a.to(u.au).value, places=5)
+        self.assertAlmostEqual(0.18479305, e.value, places=6)
+        self.assertAlmostEqual(202.44598740, W.to(u.deg).value, places=2)
+        self.assertAlmostEqual(107.13869188, w.to(u.deg).value, places=3)
+        self.assertAlmostEqual(6.02979307, i.to(u.deg).value, places=3)
+        self.assertAlmostEqual(271.92847594, M_r.to(u.deg).value, places=3)
+        # print(Time(t0, format='jd', scale='utc').isot)
+
+        # 8.2
+        r_ = [-2.57961310, -1.46709088, -1.23199012] * u.au
+        r1_ = [-0.00850280, 0.01015010, 0.00297724] * u.au / u.d
+        t_r = Time('2005-08-20T00:00:00', format='isot', scale='tt').jd * u.d
+        mu = mu_sun(0)
+
+        a, e, i, W, w, M_r, t0 = solve(r_, r1_, mu, t_r)
+        self.assertAlmostEqual(3.19393775, a.to(u.au).value)
+        self.assertAlmostEqual(1, e.value)
+        self.assertAlmostEqual(155.85899889, W.to(u.deg).value, places=7)
+        self.assertAlmostEqual(294.20696215, w.to(u.deg).value, places=7)
+        self.assertAlmostEqual(152.76699862, i.to(u.deg).value, places=7)
+        self.assertAlmostEqual(2453565.9999, t0.to(u.d).value, places=2)
+        # print(Time(t0, format='jd', scale='utc').isot)
 
     def test_gauss(self):
         t1 = Time('2013-04-10T00:00:00', format='isot', scale='tt').jd * u.d

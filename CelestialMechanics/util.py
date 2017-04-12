@@ -43,6 +43,20 @@ def norm(a: List[float]) -> float:
     return np.linalg.norm(a) * a.unit
 
 
+def matmul(a: List[float], b: List[float]) -> List[List[float]]:
+    """
+    np.dot(a, b) keeping the units
+
+    :param a: vector a
+    :type a: matrix
+    :param b: vector b
+    :type b: column vector
+    :return: np.matmul(a, b).flatten()
+    :rtype: list
+    """
+    return np.matmul(a, b).flatten() * a.unit * b.unit
+
+
 def angle_orbit(a: float, e: float, r: float, r_: List[float], r1_: List[float]) -> float:
     """
     the correct angle given the orbital elements and velocity

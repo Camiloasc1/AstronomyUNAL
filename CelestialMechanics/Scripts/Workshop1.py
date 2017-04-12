@@ -4,6 +4,7 @@ from astropy import units as u
 from astropy.time import Time
 from astropy.coordinates import SkyCoord
 
+from CelestialMechanics.coordinates import ecu2eclip
 from CelestialMechanics.mu import mu_sun
 from CelestialMechanics.orbital_determination.orbital_determination import solve_gauss
 
@@ -17,9 +18,9 @@ c_2 = SkyCoord('03h08m30.88s', '+18d05m15.88s', distance=2.265868176 * u.au)
 c_3 = SkyCoord('03h25m34.90s', '+19d14m01.58s', distance=2.300057744 * u.au)
 
 # To x,y,z
-c_1 = SkyCoord2xyz(c_1)
-c_2 = SkyCoord2xyz(c_2)
-c_3 = SkyCoord2xyz(c_3)
+c_1 = ecu2eclip(SkyCoord2xyz(c_1))
+c_2 = ecu2eclip(SkyCoord2xyz(c_2))
+c_3 = ecu2eclip(SkyCoord2xyz(c_3))
 
 t1 = Time('2017-04-02T00:00:00Z', format='isot', scale='utc').jd * u.d
 t2 = Time('2017-04-07T00:00:00Z', format='isot', scale='utc').jd * u.d
